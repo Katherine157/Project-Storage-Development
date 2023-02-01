@@ -1,0 +1,137 @@
+1
+
+
+--задаем переменные
+
+data = [
+	(1, 'Football', 'Summer'),
+	(2, 'Cycling Road', 'Summer'),
+	(3, 'Badminton', 'Summer'),
+	(4, 'Diving', 'Summer'),
+	(5, 'Beach Volleyball', 'Summer'),	
+	(6, 'Basketball', 'Winter'),
+	(7, 'Hockey', 'Winter'),
+	(8, 'Table Tennis', 'Winter'),
+	(9, 'Weightlifting', 'Winter'),
+	(10, 'Wrestling', 'Winter')
+	]
+
+columns = ['Row_id', 'Discipline', 'Season']
+
+
+--создаем датафрейм
+
+df1=spark.createDataFrame(data,columns)
+
+
+--сохраняем в файлик в формате csv
+
+df1.write.option('header', True).option('delimiter', ' ').csv('/home/katherine/discipline.csv')
+
+
+
+
+2
+ 
+
+--создаем датафрейм
+
+df = (
+spark.read
+.option('header', True)
+.option('InterSchema', True)
+.option('delimiter', ';')
+.csv('/home/katherine/Athletes.csv')
+)
+
+
+--проверяем
+
+df.printSchema()
+df.show()
+
+
+--импортируем функцию 
+
+from pyspark.sql.functions import count 
+
+
+--считаем в разрезе дисциплин количество участников
+
+count_name = df.groupBy(df['Discipline']).agg(count(df['Name']))
+
+
+--проверяем что все посчиталось
+
+count_name.show()
+
+
+--записываем в формат parquet
+
+count_name.write.parquet('count_name.parquet')
+
+
+
+
+3
+
+
+--создаем датафрейм
+
+df2 = (
+spark.read
+.option('header', True)
+.option('InterSchema', True)
+.option('delimiter', ';')
+.csv('/home/katherine/Athletes.csv')
+)
+
+
+--проверяем
+
+df2.printSchema()
+df2.show()
+
+
+--считаем в разрезе дисциплин количество участников
+
+count_name2 = df2.groupBy(df2['Discipline']).agg(count(df2['Name']))
+
+
+--проверяем что все посчиталось
+
+count_name2.show()
+
+
+--создаем датафрейм из файла, который ранее создали
+
+df3 = (
+spark.read
+.option('header', True)
+.option('InterSchema', True)
+.option('delimiter', ' ')
+.csv('/home/katherine/discipline.csv')
+)
+
+
+--проверяем
+
+df3.printSchema()
+df3.show()
+
+
+--соединяем 2 таблицы
+
+df_join = count_name2.join(df3, count_name2['Discipline'] == df3['Discipline'], 'right').select(df3['Discipline'], count_name2['count(Name)'])
+
+
+--проверяем
+
+df_join.show()
+
+
+--записываем в формат parquet
+
+df_join.write.parquet('df_join.parquet')
+
+
