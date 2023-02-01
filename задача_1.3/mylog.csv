@@ -1,0 +1,6 @@
+21-01-23 13:59:42 - to_csv - INFO - to_csv: 34 - Connection commit
+21-01-23 13:59:42 - to_csv - INFO - to_csv: 44 - Connection closed
+21-01-23 14:00:33 - to_csv - INFO - to_csv: 34 - Connection commit
+21-01-23 14:00:33 - to_csv - INFO - to_csv: 44 - Connection closed
+21-01-23 14:02:25 - from_csv - INFO - from_csv: 27 - Connection commit
+21-01-23 14:02:25 - from_csv - INFO - from_csv: 37 - Connection closed
